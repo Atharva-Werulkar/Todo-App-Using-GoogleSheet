@@ -1,6 +1,6 @@
 # todo
 
-A new Flutter project.
+A Todo Application Using Google Sheets as backend.
 
 ## Getting Started
 
