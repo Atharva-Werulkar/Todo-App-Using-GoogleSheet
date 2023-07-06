@@ -1,125 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:gsheets/gsheets.dart';
 
-void main() {
+//create Credential
+const _credentials = r'''
+{
+  "type": "service_account",
+  "project_id": "todo-application-392002",
+  "private_key_id": "92a33cf064170a058ce096f6d491e123e45fcac7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCil10zWqQA1akj\noWygBl8+1IqPedh+rpIkURAzS3X9MNwhnEfLDEMlUs6UxmqsyczW9BR7BreFDth0\nOIrDYj+akENFLQsDrPSastCD6nzdf9tTY5L+c9JTIZCfpofpu0jR86B5KyhZWM3q\nNGA7DPDcjtGOfVql2Ro4yHPit4q/mJNFR9rxzwOrC7wYcmLwjYXibo4G4DTRHX48\ndyWQPE6HHYsV6foXS5RK8XOLkwy1vp3m07jZbtjjjRltfc0IN3bmkQz5JojTbuOj\npomX13UeIWWBItjgOdjL+72Gv1p5HdBa5WkfkgM351qJenwIWIXe0b5GLqgo536C\nkXkjGGhpAgMBAAECggEAGqTKQZWbZYWdy3hy+ABDUGT89ckGSLArw6bDDFzTz3NX\nx2w4OZZfVHju4GNpbLo/BoSF7KkrnrLRlq4DU0RA3v+//lCEywvnI4ik8dEVuChx\nFQeuuWLadwP7kqX0BMHLi5gsVl7TpFyQlc4SbOrQd5wxy/NPzPi4OtDiaKciJgZE\nUeuidcJHNXeY8SBIIxSF35vMY8BquC/gPfvEXEdFCKvZFSJ4eNsQsk7UVFIJCPOA\nhhOWpxUn1SqNKakLOK2T+9UNkBlGDbC697u+Kl03j3DBzcQWpMfcVSBarne1HfoP\nW9NE0jaaZTZTKi7jBYu+1cSJ4X/0rWC1a9mTpyRsrwKBgQDNaPEqYQcuEuzJa9Q9\nnjwhtwrUP49XmGcE+eWzOnKKSqFRuJJrePdNXSHuPW2ZJu4pP8b+rtuIplSITC8e\nAQLtdawkOKSWJvxeCGgu7JMv4osEghkpjeFXSFMKqG/w23ybqbIFnlOtZBvwVuM+\nxL0SsG9ukl4G/ItOD7hR6k7QAwKBgQDKoraT7XpaKL77PQrQP++ERm3F7CYmBJox\nRmHDkkKXDd/VdpKNPXQrh/QYfyKSDtTOezXaV64YufnU1bDTDYbg9ifGb0YyP5Z9\nD8dfflYXL/ibN9gzbkVcpnsRIAUrYl25/iTwmQ8HFd28l0ETIiUyPH+p0XLTagqr\nspnadfCoIwKBgCQI2e3uUZ0iksmPEg+xN6lOfCbZ86KRSNlVoZc8lKVwDDbS41TZ\nRsEaqn4p5pUsgDFaT+WT9U1WqJO0kbt4v/O6ZfWAvlbdBf7VCLnapMOMwYiL7jAd\nBMAUHwVKoUCmsIh6T5Guwc00N7aE956mUuj5bMMACGC/YwzRsysjqKnTAoGAUztI\ncTR/KB9Katnk4isQz606E6zu8ni7ePfm2jTuYytQwFZm1drjJ6o9Kf62jXXIFVPo\nh9mx6fgh1Tk820PYHfkd11UHaUZTIuVjSCcVZ4rNu7vRczadCPRc4mjblrldtDLe\nq3DDCm8B2B/sm9ZPnvXYnkEowAvzfBjtNx1wjy8CgYEAtBk/ZmuGpTovgqYJ6NBY\n5kyAis+M39iF69Oqstm4NqZ5XN6TDtXlK+EXcey+VeF1LA96/VKjoIHD/L9tvBWD\nWy8wj1bi+I72hYkyUJCKgCjjKgWqND78KLeOgj7RChqZqmDBQA0Fk1oY7WELqeQ2\n+1jumJXbgGhvh77URpR9lwk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "todo-application@todo-application-392002.iam.gserviceaccount.com",
+  "client_id": "107218075720698985220",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/todo-application%40todo-application-392002.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+
+''';
+
+const _spreadsheetId = '1272c8vYovUF-uZ9b-J8Qv0uaVNCNyMhhNl4BujEqPxE';
+
+void main() async {
+  //initialize the GoogleSheets class
+
+  final gsheet = GSheets(_credentials);
+
+  //fetch the spreadsheet by its id
+
+  final ss = await gsheet.spreadsheet(_spreadsheetId);
+
+  //get the worksheet by its title
+  var sheet = ss.worksheetByTitle('Worksheet1');
+
+  //update cell at row 1, column 1
+  await sheet?.values.insertValue('Hello World', column: 1, row: 1);
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    return const Placeholder();
   }
 }
